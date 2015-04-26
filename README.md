@@ -6,7 +6,7 @@ This is a first take on a jquery plugin to make svg output from graphviz more in
 Example
 -------
 
-Have a look at the fiddle: http://jsfiddle.net/vo7pjdeb/
+Have a look at the fiddle: https://cdn.rawgit.com/mountainstorm/jquery.graphviz.svg/master/demo.html
 
 
 Documentation
