@@ -1,110 +1,100 @@
-README
-======
+jquery.graphviz.svg
+===================
 
-This is a first take on a jquery plugin to make svg output from graphviz more interactive.
+jQuery plugin to make Graphviz SVG output more interactive and easier to navigate.  Makes it easy to have features like:
+* Highlight nodes/edges
+* Zoom in/out
+* Graph navigation - select linked nodes
+* Fancy UI tooltips; bootstrap supported out the box
+* Move things forward/back in the graph
 
-Example
--------
-
-Have a look at the fiddle: https://cdn.rawgit.com/mountainstorm/jquery.graphviz.svg/master/demo.html
+Have a look at the demo: https://cdn.rawgit.com/mountainstorm/jquery.graphviz.svg/master/demo.html
 
 
 Documentation
 -------------
 
- \brief Provides utility functions for manipulating Graphviz generated svg diagrams.
-        These functions allow you to import svg graphs, make them look prettier and
-        provide a level of interactivity.
+Create a node where you want your SVG graph to be displayed.  Typically you will want to:
+* set its size (width/height/top/bottom etc)
+* set it as a positioning root; set `positioning: relative` or somethign else
+* enable `overflow: scroll`
 
- \param action    the action to perform (see below)
- \param options   (optional) the options to the action
+Something like this works pretty well:
+`<div id="graph" style="width: 100%; height: 100%; overflow: scroll; position: relative;"></div>`
 
- \details requires:
-              https://github.com/jquery/jquery-mousewheel (for enableZoom)
-              https://github.com/jquery/jquery-color/ (for highlight)
+Next includes the css, and javascript:
+`<link rel="stylesheet" href="css/graphviz.svg.css">`
 
-          Actions:
+`<script type="text/javascript" src="js/graphviz.svg.js"></script>`
 
-          "load": loads, adopts and setsup svg from a URL.  
-                  options {url: "test.svg", complete:function() {} } and any specified in "setup".
+Then init the node as a Graphviz object:
+```
+$(document).ready(function(){
+    $("#graph").graphviz({
+        url: "demo.svg", 
+        ready: function() {
+            var gv = this
+        }
+    });
+});
+```
 
-          "adopt": adopts and setsup a chunk of svg and loads it inside this node.  options
-                   {svg: xmlData} and any specified in "setup"
+Depending on the options passed this will load, adopt and setup the Graphviz generated SVG under `#graph` and call your supplied `ready` function when the setup is complete.
 
-          "setup": perform multipl actions to setup the graph
-                   options: {shrink: "0.1pt", merge=false} etc
-                            svg specifies the xml data to load; key/values specifies actions
-                            (and their options) to perform once loaded; merge (optional) 
-                            specifies if the supplied actions should be merged with the 
-                            default ones - or replace them
+Options:
+* __url__: if present the url to fetch the svg from
+* __svg__: raw SVG (xml) data to adopt 
+* __shrink__: the amount to shrink nodes by; this gives a nice gap between nodes and edges.  Default '0.125pt'
+* __tooltips__: object containing callbacks for `init`, `show`, `hide` and `update`.  Default implementation uses bootstrap
+* __zoom__: enable shift-scroll zoom.  Default true
+* __highlight__: object containing callbacks for `selected`, `unselected`; Default dims color of unselected
+* __ready__: callback when setup is complete.  Will be asyncronous if loading svg from a url
 
-                            any graphviz comments supplied are added in "data-comment" attributes
+The demo (demo.html) and the source (`GraphvizSvg.DEFAULTS`) show how these work in detail.
 
-                            defaults:
-                                  shrink: "0.125pt",
-                                  dropTitles: true,
-                                  tooltips: "bootstrap",
-                                  noselect: true,
-                                   
-          "shrink": shrinks all nodes to provide a gap between the edges and nodes
-                    making it look nicer and more modern.  
+There are also other methods you can call to navigate the graph, select elements, highlight, move etc.  To access these you need to get the 'graphviz.svg' object from the jQuery element you initialized (`$('#graph').data('graphviz.svg')`); it is also supplied as `this` to the `ready` callback.
 
-                    options: a number; a string e.g. "1px" or "1pt"; or an object of 
-                             the format {x: 6, y: "1pt"}.  "pt" is treated as graphviz 
-                             points - allowing you to add padding/width when generating 
-                             svg in points.
+`GraphvizSvg.nodes()`
+Returns all node DOM elements
 
-          "dropTitles": removes the title elements which get added with the .dot node name, 
-                        and causes browsers to show tooltips.  We remove them and store the 
-                        value as in "data-name" on the "g" element.
+`GraphvizSvg.edges()`
+Returns all edge DOM elements
 
-          "tooltips": converts tooltip values (xlink:title] to "title", preventing making it 
-                      easier to use 3rd party tooltip tools.  If true; just changes attribute
-                      if "bootstrap", calls bootstrap tooltip function with this as the container
+`GraphvizSvg.nodesByName()`
+Returns an object mapping graphviz node names to its DOM element
 
-          "noselect": marks everything (in css) as no-select; so you can't select labels 
+`GraphvizSvg.edgesByName()`
+Returns an object mapping graphviz edge names to its DOM element
 
-          "nodes": select all "g" elements which are nodes
+`GraphvizSvg.linkedTo(node, includeEdges)`
+Returns a jQuery set of DOM elements linked to `node`; if includeEdges is true if also includes the edges
 
-          "edges": select all "g" elements which are edges
+`GraphvizSvg.linkedFrom(node, includeEdges)`
+Returns a jQuery set of DOM elements linked from `node`; if includeEdges is true if also includes the edges
 
-          "all": select all "g" elements
+`GraphvizSvg.linked(node, includeEdges)`
+Returns a jQuery set of DOM elements linked with `node` (in an undirected graph); if includeEdges is true if also includes the edges
 
-          "names": returns a dict {nodes: {n0: element}, edges: {"n0->n1", element}}
+`GraphvizSvg.tooltip($elements, show)`
+Show/hide tooltips on the SOM elements in the `$elements` set
 
-          "tooltip-show": show all tooltips of selected nodes/edges; keep them visible even on
-                          hover; requires bootstrap tooltips
-                   
-          "tooltip-hide": hide all tooltips of selected nodes/edges; stop keeping them visible
-                          even on hover; requires bootstrap tooltips
+`GraphvizSvg.bringToFront($elements)`
+Brings the DOM elements in the jQuery set to the front
+  
+`GraphvizSvg.sendToBack($elements)`
+Sends the DOM elements in the jQuery set to the back
 
-          "color": temporarily changes the stroke and fill of nodes/edges, options: color
+`GraphvizSvg.highlight($nodesEdges, tooltips)`
+Highlight the DOM elements in `$nodesEdges`, if `tooltips` is true also show tooltips.  If no nodes are passed it unselects all nodes/edges
 
-          "stroke": temporarily changes the stroke of nodes/edges, options: color
 
-          "fill": temporarily changes the fill of nodes/edges, options: color
+Dependencies
+------------
 
-          "send-to-back": sends the selected nodes/edges to the back 
-
-          "send-to-front": sends the selected nodes/edges to the front
-
-          "zoom": zoom to various levels; options = "x1" (native), "x2", "x0.5", "200%" etc or "fit"
-
-          "enableZoom": enables 'shift'-scroll to zoom graph - sets zoom to fit
-
-          "select-down": selects all nodes/edges linking from this one
-
-          "select-up": selects all nodes/edges linking to this one
-
-          "select-linked": selects all nodes/edges linking to this one
-
-          "select-all": selects all nodes/edges connection with this one
-              
-          "enable-highlight": enables automatic highlighting on mouse over
-              
-          "highlight": highlights the selected nodes
-              
-          "un-highlight": un-highlights all nodes
+* jquery-2.1.3.js; for everything
+* Bootstrap; for default tooltips - not needed if you disable/dont use your own tooltips
+* jquery.color.js; for default highligh coloring - not needed it you supply your own
+* jquery.mousewheel.js; for scrolling - not needed if you turn it off
 
 
 Keywords
