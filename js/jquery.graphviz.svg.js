@@ -24,6 +24,12 @@
  +function ($) {
   'use strict'
 
+  // Cross Browser endsWith support
+  // ===================================
+  String.prototype.endsWith = function(suffix) {
+    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+  };
+
   // GRAPHVIZSVG PUBLIC CLASS DEFINITION
   // ===================================
 
