@@ -24,8 +24,12 @@
  +function ($) {
   'use strict'
 
-  // Cross Browser endsWith support
-  // ===================================
+  // Cross Browser starts/endsWith support
+  // =====================================
+  String.prototype.startsWith = function(prefix) {
+    return this.indexOf(prefix) == 0;
+  };
+
   String.prototype.endsWith = function(suffix) {
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
   };
@@ -326,33 +330,33 @@
     return retval
   }
 
-  GraphvizSvg.prototype.findEdge = function (s, $retval) {
+  GraphvizSvg.prototype.findEdge = function (nodeName, testEdge, $retval) {
     var retval = []
-    var re = new RegExp(s)
     for (var name in this._edgesByName) {
-      var match = re.exec(name)
+      var match = testEdge(nodeName, name)
       if (match) {
         if ($retval) {
           $retval.push(this._edgesByName[name])
         }
-        retval.push(match[1])
+        retval.push(match)
       }
     }
     return retval
   }
 
-  GraphvizSvg.prototype.findLinked = function (node, includeEdges, getRegExp, $retval) {
+  GraphvizSvg.prototype.findLinked = function (node, includeEdges, testEdge, $retval) {
     var that = this
+    var $node = $(node)
     var $edges = null
     if (includeEdges) {
       $edges = $retval
     }
-    var names = this.findEdge(getRegExp($(node).attr('data-name')), $edges)
+    var names = this.findEdge($node.attr('data-name'), testEdge, $edges)
     for (var i in names) {
       var n = this._nodesByName[names[i]]
       if (!$retval.is(n)) {
         $retval.push(n)
-        that.findLinked(n, includeEdges, getRegExp, $retval)
+        that.findLinked(n, includeEdges, testEdge, $retval)
       }
     }
   }
@@ -404,26 +408,36 @@
 
   GraphvizSvg.prototype.linkedTo = function (node, includeEdges) {
     var $retval = $()
-    this.findLinked(node, includeEdges, function (name) {
-      return '^(.*)->' + name + '$'
+    this.findLinked(node, includeEdges, function (nodeName, edgeName) {
+      var other = null;
+      var match = '->' + nodeName
+      if (edgeName.endsWith(match)) {
+        other = edgeName.substring(0, edgeName.length - match.length);
+      }
+      return other;
     }, $retval)
     return $retval
   }
 
   GraphvizSvg.prototype.linkedFrom = function (node, includeEdges) {
     var $retval = $()
-    this.findLinked(node, includeEdges, function (name) {
-      return '^' + name + '->(.*)$'
+    this.findLinked(node, includeEdges, function (nodeName, edgeName) {
+      var other = null;
+      var match = nodeName + '->'
+      if (edgeName.startsWith(match)) {
+        other = edgeName.substring(match.length);
+      }
+      return other;
     }, $retval)
     return $retval
   }
 
   GraphvizSvg.prototype.linked = function (node, includeEdges) {
     var $retval = $()
-    this.findLinked(node, includeEdges, function (name) {
+    this.findLinked(node, includeEdges, function (nodeName, edgeName) {
       return '^' + name + '--(.*)$'
     }, $retval)
-    this.findLinked(node, includeEdges, function (name) {
+    this.findLinked(node, includeEdges, function (nodeName, edgeName) {
       return '^(.*)--' + name + '$'
     }, $retval)
     return $retval
