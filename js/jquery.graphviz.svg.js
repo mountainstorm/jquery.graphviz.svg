@@ -46,7 +46,7 @@
     this.init('graphviz.svg', element, options)
   }
 
-  GraphvizSvg.VERSION  = '1.0.0'
+  GraphvizSvg.VERSION  = '1.0.1'
 
   GraphvizSvg.GVPT_2_PX = 32.5 // used to ease removal of extra space
 
@@ -156,7 +156,7 @@
 
     // add top level class and copy background color to element
     this.$element.addClass('graphviz-svg')
-    if (this.$background[0]) {
+    if (this.$background.length) {
       this.$element.css('background', this.$background.attr('fill'))
     }
 
@@ -462,7 +462,7 @@
   }
   
   GraphvizSvg.prototype.sendToBack = function ($elements) {
-    if (this.$background) {
+    if (this.$background.length) {
       $element.insertAfter(this.$background)
     } else {
       $elements.detach().prependTo(this.$graph)
