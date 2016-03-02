@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2015 Mountainstorm
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -73,7 +73,7 @@
         var $a = $(this)
         $a.attr('data-tooltip-keepvisible', true)
         $a.tooltip('show')
-      }, 
+      },
       hide: function () {
         var $a = $(this)
         $a.removeAttr('data-tooltip-keepvisible')
@@ -92,8 +92,8 @@
       selected: function (col, bg) {
         return col
       },
-      unselected: function (col, bg) { 
-        return jQuery.Color(col).transition(bg, 0.9) 
+      unselected: function (col, bg) {
+        return jQuery.Color(col).transition(bg, 0.9)
       }
     },
     ready: null
@@ -203,7 +203,8 @@
     // save the node name and check if theres a comment above; save it
     var $title = $el.children('title')
     if ($title[0]) {
-      var title = $title.text()
+      // remove any compass points:
+      var title = $title.text().replace(/:[sn][ew]?/,'')
       $el.attr('data-name', title)
       $title.remove()
       if (isNode) {
@@ -226,7 +227,7 @@
         if (value != title) {
           // user added comment
           $el.attr('data-comment', value)
-        }        
+        }
       }
     }
 
@@ -305,9 +306,9 @@
         var xy = pts[i].split(',')
         var ox = parseFloat(xy[0])
         var oy = parseFloat(xy[1])
-        points += (((cx - ox) / (bbox.width / 2) * dx) + ox) + 
+        points += (((cx - ox) / (bbox.width / 2) * dx) + ox) +
           ',' +
-          (((cy - oy) / (bbox.height / 2) * dy) + oy) + 
+          (((cy - oy) / (bbox.height / 2) * dy) + oy) +
           ' '
       }
       $node.attr('points', points)
@@ -384,7 +385,7 @@
       }
       if (color.stroke) {
         $this.attr('stroke', color.stroke)
-      }      
+      }
     })
   }
 
@@ -460,7 +461,7 @@
   GraphvizSvg.prototype.bringToFront = function ($elements) {
     $elements.detach().appendTo(this.$graph)
   }
-  
+
   GraphvizSvg.prototype.sendToBack = function ($elements) {
     if (this.$background.length) {
       $element.insertAfter(this.$background)
@@ -498,7 +499,7 @@
     this.hide(function () {
       that.$element.off('.' + that.type).removeData(that.type)
     })
-  }  
+  }
 
 
   // GRAPHVIZSVG PLUGIN DEFINITION
