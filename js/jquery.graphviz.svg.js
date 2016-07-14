@@ -204,7 +204,7 @@
     var $title = $el.children('title')
     if ($title[0]) {
       // remove any compass points:
-      var title = $title.text().replace(/:[snew][ew]?/,'')
+      var title = $title.text().replace(/:[snew][ew]?/g,'')
       $el.attr('data-name', title)
       $title.remove()
       if (isNode) {
