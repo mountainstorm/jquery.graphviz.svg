@@ -114,7 +114,7 @@
       }, "xml")
     } else {
       if (options.svg) {
-        this.$element.html(document.adoptNode(options.svg[0]))
+        this.$element.html(options.svg)
       }
       this.setup()
     }
