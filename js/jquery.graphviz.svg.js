@@ -59,7 +59,7 @@
         var $a = $(this)
         $a.tooltip({
           container: $graph,
-          placement: 'auto left',
+          placement: 'left',
           animation: false,
           viewport: null
         }).on('hide.bs.tooltip', function() {
