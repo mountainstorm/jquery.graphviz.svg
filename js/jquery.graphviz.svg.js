@@ -59,7 +59,7 @@
         var $a = $(this)
         $a.tooltip({
           container: $graph,
-          placement: 'auto left',
+          placement: 'left',
           animation: false,
           viewport: null
         }).on('hide.bs.tooltip', function() {
@@ -232,7 +232,7 @@
     }
 
     // remove namespace from a[xlink:title]
-    $el.children('a').filter(function () { return $(this).attr('xlink:title') }).each(function () {
+    $el.find('a').filter(function () { return $(this).attr('xlink:title') }).each(function () {
       var $a = $(this)
       $a.attr('title', $a.attr('xlink:title'))
       $a.removeAttr('xlink:title')
@@ -448,7 +448,7 @@
     var that = this
     var options = this.options
     $elements.each(function () {
-      $(this).children('a[title]').each(function () {
+      $(this).find('a[title]').each(function () {
         if (show) {
           options.tooltips.show.call(this)
         } else {
