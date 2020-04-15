@@ -367,10 +367,10 @@
     $el.find('polygon, ellipse, path').each(function() {
       var $this = $(this)
       var color = $this.data('graphviz.svg.color')
-      if (color.fill && $this.prop('tagName') != 'path') {
+      if (color.fill && color.fill != "none" && $this.prop('tagName') != 'path') {
         $this.attr('fill', getColor(color.fill, bg)) // don't set  fill if it's a path
       }
-      if (color.stroke) {
+      if (color.stroke && color.stroke != "none") {
         $this.attr('stroke', getColor(color.stroke, bg))
       }
     })
@@ -380,10 +380,10 @@
     $el.find('polygon, ellipse, path').each(function() {
       var $this = $(this)
       var color = $this.data('graphviz.svg.color')
-      if (color.fill) {
+      if (color.fill && color.fill != "none") {
         $this.attr('fill', color.fill) // don't set  fill if it's a path
       }
-      if (color.stroke) {
+      if (color.stroke && color.stroke != "none") {
         $this.attr('stroke', color.stroke)
       }
     })
